@@ -138,6 +138,10 @@ function watchTile(tile) {
   let downSince = Date.now();
   setInterval(() => {
     const v = tile.querySelector("video");
+    // Keep it muted (survives reconnects) and nudge playback if it stalled —
+    // both guard against autoplay blocking, which reads as a false "offline".
+    if (v && !v.muted) v.muted = true;
+    if (v && v.paused && v.readyState >= 2) v.play().catch(() => {});
     const live = v && v.videoWidth > 0 && v.readyState >= 2 && !v.paused;
     if (live) {
       liveSince = liveSince || Date.now();
@@ -166,8 +170,17 @@ async function init() {
   cameras.forEach((c) => {
     const tile = makeTile(c);
     grid.appendChild(tile);
-    // Now that the element is in the DOM, setting .src kicks off the connection.
+    // The element is in the DOM now, so its <video> exists (created on
+    // connectedCallback). Mute BEFORE connecting: the streams carry AAC, and
+    // Chrome/Edge block autoplay of video *with sound* — which left the tile
+    // stuck on "offline". Muted autoplay is allowed in every browser (and you
+    // don't want camera audio blaring on a wall anyway).
     const player = tile.querySelector("video-stream");
+    if (player.video) {
+      player.video.muted = true;
+      player.video.setAttribute("playsinline", "");
+    }
+    // Setting .src kicks off the connection (and play, now muted).
     player.src = player.dataset.ws;
     watchTile(tile);
   });

@@ -20,5 +20,9 @@ services:
     restart: unless-stopped
     ports:
       - "8088:80"
+    # Lets the dashboard's nginx reach go2rtc (host network) at
+    # host.docker.internal:1984 to proxy /api/*.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - go2rtc

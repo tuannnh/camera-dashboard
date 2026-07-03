@@ -69,6 +69,20 @@ Change visibility → Public**. (Or `docker login ghcr.io` on the host before pu
 - **Apple TV:** the **AirPlay** button appears only in **Safari** (macOS/iOS).
   Open the dashboard in Safari on the device you're casting from.
 
+## Behind a reverse proxy (Nginx Proxy Manager, Traefik, …)
+The dashboard is served as a single origin: its nginx also reverse-proxies
+`/api/*` to go2rtc, and the frontend talks to `location.origin` (never a separate
+`:1984`). So you only need to proxy the **one** dashboard host:
+
+- Point your proxy at the dashboard (e.g. `camera.example.com` → `host:8088`).
+- **Enable WebSocket support** on that proxy host (needed for `/api/ws`).
+- No extra location/route for go2rtc is required — the dashboard handles `/api/`.
+
+go2rtc runs on the host network, so the dashboard reaches it via
+`host.docker.internal:1984` (see `extra_hosts` in `docker-compose.yml`). If you run
+go2rtc as a bridge service instead, set `GO2RTC_UPSTREAM=go2rtc:1984` on the
+dashboard container.
+
 ## Adding the E1 (later)
 Uncomment the `e1` block in `go2rtc.yaml`, add `E1_RTSP` to `.env`, and add an
 entry to `web/cameras.json`.

@@ -1,5 +1,5 @@
-// Where go2rtc is reachable FROM THE BROWSER.
-// go2rtc runs with host networking on the same machine as this dashboard,
-// so by default we point at the same host on port 1984.
-// Override here if go2rtc lives elsewhere, e.g. "http://192.168.1.10:1984".
-window.GO2RTC_URL = `${location.protocol}//${location.hostname}:1984`;
+// Same-origin. The dashboard's own nginx proxies /api/* to go2rtc, so the
+// browser only ever talks to this one host. This works whether you hit the
+// dashboard directly (http://host:8088) or through an HTTPS reverse proxy
+// (https://camera.example.com) — no separate :1984 origin, no mixed content.
+window.GO2RTC_URL = location.origin;

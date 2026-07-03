@@ -1,0 +1,13 @@
+# Secrets — real RTSP URLs, credentials, internal IPs. NEVER commit.
+.env
+.env-checkpoint
+
+# Jupyter checkpoints (can hold a backup copy of .env with real creds)
+.ipynb_checkpoints/
+
+# Local editor / Claude Code settings
+.claude/
+
+# Local go2rtc runtime artifacts
+go2rtc/
+*.log

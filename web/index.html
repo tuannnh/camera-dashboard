@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Camera Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Cast shim MUST be defined before the SDK loads, or its callback is missed. -->
+  <script>
+    window.__onGCastApiAvailable = function (available) {
+      window.__castApiAvailable = available;
+      if (window.__initCast) window.__initCast(available);
+    };
+  </script>
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+</head>
+<body>
+  <header>
+    <h1>Cameras</h1>
+    <button id="fullscreen-btn" title="Fullscreen">⛶</button>
+  </header>
+  <main id="grid" class="grid"></main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

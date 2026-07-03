@@ -1,0 +1,112 @@
+:root {
+  --bg: #0d0f13;
+  --panel: #171a21;
+  --text: #e6e8ec;
+  --accent: #3b82f6;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+}
+
+header h1 { font-size: 18px; margin: 0; font-weight: 600; }
+
+header button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid #2a2f3a;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  gap: 10px;
+  padding: 0 16px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+}
+
+.tile {
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.tile video-stream {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tile video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* contain = show the whole frame at its true aspect ratio, never crop.
+     The stream is 16:9 and the tile is 16:9, so it fills with no bars. */
+  object-fit: contain;
+  background: #000;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #0b0d11;
+  color: #8b93a1;
+  text-align: center;
+}
+
+.placeholder .ph-name { font-weight: 600; color: var(--text); }
+.placeholder .ph-status { font-size: 13px; }
+.placeholder[hidden] { display: none; }
+
+.tile-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+
+.tile-name { flex: 1; font-weight: 600; text-shadow: 0 1px 2px #000; }
+
+.tile-bar button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.tile-bar button:hover { background: var(--accent); border-color: var(--accent); }
+
+.error { padding: 24px; color: #ff8080; }

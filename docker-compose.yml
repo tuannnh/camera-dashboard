@@ -1,0 +1,24 @@
+services:
+  go2rtc:
+    image: alexxit/go2rtc:latest
+    container_name: go2rtc
+    restart: unless-stopped
+    # host networking makes WebRTC candidate discovery + RTSP just work on a LAN.
+    network_mode: host
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    volumes:
+      - ./go2rtc.yaml:/config/go2rtc.yaml:ro
+      - ./go2rtc-entrypoint.sh:/entrypoint.sh:ro
+    env_file: .env
+
+  dashboard:
+    # Prebuilt image from GitHub Actions (GHCR). `build: .` lets you also build
+    # locally with `docker compose up --build` without pulling.
+    image: ghcr.io/tuannnh/camera-dashboard:latest
+    build: .
+    container_name: camera-dashboard
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    depends_on:
+      - go2rtc

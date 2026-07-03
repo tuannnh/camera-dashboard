@@ -1,0 +1,10 @@
+.git
+.github
+.env
+.env.example
+docker-compose.yml
+go2rtc.yaml
+go2rtc-entrypoint.sh
+README.md
+*.log
+go2rtc/

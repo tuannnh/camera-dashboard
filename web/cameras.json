@@ -1,0 +1,6 @@
+{
+  "cameras": [
+    { "id": "doorbell", "name": "Doorbell" },
+    { "id": "g100", "name": "Gate" }
+  ]
+}

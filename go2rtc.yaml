@@ -1,0 +1,39 @@
+# go2rtc configuration
+# ---------------------
+# Each camera has TWO sources:
+#   1. the raw Aqara RTSP stream (may be H.265/HEVC)
+#   2. an ffmpeg transcode to H.264 for clients that can't do HEVC
+#      (browser WebRTC, Chromecast). go2rtc auto-negotiates: Safari/AirPlay
+#      can take the native HEVC source, Chrome/Chromecast get the H.264 one.
+#
+# The RTSP URLs come from the Aqara Home app (Settings -> camera -> RTSP).
+# They contain a token and can rotate, so keep them in .env, not here.
+
+streams:
+  doorbell:
+    - ${DOORBELL_RTSP}
+    - ffmpeg:doorbell#video=h264#audio=aac
+  g100:
+    - ${G100_RTSP}
+    - ffmpeg:g100#video=h264#audio=aac
+
+  # E1 (skipped for now). Uncomment and set E1_RTSP in .env to enable:
+  # e1:
+  #   - ${E1_RTSP}
+  #   - ffmpeg:e1#video=h264#audio=aac
+
+api:
+  listen: ":1984" # web UI + WebRTC/HLS/MSE endpoints the dashboard talks to
+  origin: "*"     # allow the dashboard (served on :8088) to open WS/API cross-origin
+
+rtsp:
+  listen: ":8554"
+
+webrtc:
+  listen: ":8555" # TCP/UDP for WebRTC; exposed via host networking
+  # If cameras/clients are on a different subnet, hardcode the host LAN IP:
+  # candidates:
+  #   - 192.168.1.10:8555
+
+log:
+  level: info

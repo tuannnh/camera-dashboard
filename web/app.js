@@ -89,7 +89,13 @@ function makeTile({ id, name }) {
 
   const player = document.createElement("video-stream");
   // These are PROPERTIES on VideoRTC, not HTML attributes.
-  player.mode = "webrtc,mse,hls,mjpeg"; // try WebRTC first, fall back gracefully
+  // MSE (not WebRTC): WebRTC media can't traverse an HTTP reverse proxy (its
+  // :8555 media port isn't proxied), and the player would switch away from a
+  // working MSE stream to a dead WebRTC one — that's why Chrome/Edge showed
+  // "offline" while Firefox stayed on MSE. MSE streams over the proxied
+  // WebSocket and works in every browser, on LAN and through the proxy.
+  // (LAN-only users who want sub-second latency can add "webrtc" back here.)
+  player.mode = "mse,hls,mjpeg";
   player.background = true; // keep the connection alive when off-screen
   // NOTE: .src is set later (in init) once the tile is in the DOM, because the
   // setter immediately connects and needs the element's <video> to exist.

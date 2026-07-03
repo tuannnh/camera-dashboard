@@ -134,27 +134,32 @@ function makeTile({ id, name }) {
 function watchTile(tile) {
   const ph = tile.querySelector(".placeholder");
   const status = ph.querySelector(".ph-status");
-  let liveSince = 0;
-  let downSince = Date.now();
+  let lastTime = -1;
+  let lastProgress = Date.now();
+  let everLive = false;
   setInterval(() => {
     const v = tile.querySelector("video");
-    // Keep it muted (survives reconnects) and nudge playback if it stalled —
-    // both guard against autoplay blocking, which reads as a false "offline".
+    // Keep it muted (survives reconnects) and nudge playback if it stalled.
     if (v && !v.muted) v.muted = true;
     if (v && v.paused && v.readyState >= 2) v.play().catch(() => {});
-    const live = v && v.videoWidth > 0 && v.readyState >= 2 && !v.paused;
-    if (live) {
-      liveSince = liveSince || Date.now();
-      downSince = 0;
-      ph.hidden = true;
+    // "Playing" = the playback position actually advanced. Far more stable than
+    // instantaneous readyState/paused, which blip during normal live-edge
+    // buffering and made the opaque overlay flicker on/off every poll.
+    const t = v ? v.currentTime : 0;
+    if (t > lastTime + 0.01) {
+      lastProgress = Date.now();
+      everLive = true;
+    }
+    lastTime = t;
+    const downMs = Date.now() - lastProgress;
+    if (everLive && downMs < 6000) {
+      ph.hidden = true; // playing, or just a brief buffering blip — keep video visible
     } else {
-      liveSince = 0;
-      downSince = downSince || Date.now();
       ph.hidden = false;
       status.textContent =
-        Date.now() - downSince > 8000 ? "Offline — camera not reachable" : "Connecting…";
+        downMs > 12000 ? "Offline — camera not reachable" : "Connecting…";
     }
-  }, 2000);
+  }, 1000);
 }
 
 async function init() {
